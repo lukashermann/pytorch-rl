@@ -250,6 +250,7 @@ class A3CCnnModel(Model):
         self.value_5  = nn.Linear(self.hidden_dim, 1)
 
         self._reset()
+        print("output dim: ", self.output_dims)
 
     def _init_weights(self):
         self.apply(init_weights)

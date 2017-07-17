@@ -39,6 +39,16 @@ def preprocessAtari(frame):
     frame*= (1. / 255.)
     return frame
 
+def preprocessMujoco(frame):
+    # resize from 500x500 to 42x42
+    frame = cv2.resize(frame, (42,42))
+    frame = frame.mean(2)
+    frame = frame.astype(np.float32)
+    frame*= (1. / 255.)
+    #cv2.imshow("w",frame)
+    #cv2.waitKey(1)
+    return frame
+
 # TODO: check the order rgb to confirm
 def rgb2gray(rgb):
     gray_image     = 0.2126 * rgb[..., 0]

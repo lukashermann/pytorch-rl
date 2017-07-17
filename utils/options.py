@@ -16,10 +16,12 @@ CONFIGS = [
 [ "empty",    "gym",       "CartPole-v0",              "mlp",      "none"      ],  # 0
 [ "dqn",      "gym",       "CartPole-v0",              "mlp",      "sequential"],  # 1
 [ "dqn",      "atari-ram", "Pong-ram-v0",              "mlp",      "sequential"],  # 2
-[ "dqn",      "atari",     "PongDeterministic-v3",     "cnn",      "sequential"],  # 3
+[ "dqn",      "atari",     "PongDeterministic-v4",     "cnn",      "sequential"],  # 3
 [ "dqn",      "atari",     "BreakoutDeterministic-v3", "cnn",      "sequential"],  # 4
-[ "a3c",      "atari",     "PongDeterministic-v3",     "a3c-cnn",  "none"      ],  # 5
-[ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mjc",  "none"      ]   # 6
+[ "a3c",      "atari",     "PongDeterministic-v4",     "a3c-cnn",  "none"      ],  # 5
+[ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mlp",  "none"      ],  # 6
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-mjc",  "none"      ],  # 7
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ]   # 8
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -27,15 +29,15 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "alienware"  # "machine_id"
-        self.timestamp   = "17052100"   # "yymmdd##"
+        self.machine     = "lukas-laptop"  # "machine_id"
+        self.timestamp   = "17071601"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 5
+        self.config      = 8
 
         self.seed        = 123
-        self.render      = False        # whether render the window from the original envs or not
-        self.visualize   = True         # whether do online plotting and stuff or not
+        self.render      = False         # whether render the window from the original envs or not
+        self.visualize   = False         # whether do online plotting and stuff or not
         self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
@@ -117,8 +119,12 @@ class EnvParams(Params):    # settings for simulation environment
             self.wid_state = 80
             self.preprocess_mode = 3  # 0(nothing) | 1(rgb2gray) | 2(rgb2y) | 3(crop&resize depth)
             self.img_encoding_type = "passthrough"
+        elif self.env_type == "mujoco":
+            self.hei_state = 42
+            self.wid_state = 42
+            self.preprocess_mode = 0
         else:
-            assert False, "env_type must be: gym | atari-ram | atari | lab"
+            assert False, "env_type must be: gym | atari-ram | atari | lab | mujoco"
 
 class ModelParams(Params):  # settings for network architecture
     def __init__(self):
