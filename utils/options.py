@@ -34,10 +34,10 @@ class Params(object):   # NOTE: shared across all modules
         self.timestamp   = "17071703"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 9
+        self.config      = 7
 
         self.seed        = 123
-        self.render      = True         # whether render the window from the original envs or not
+        self.render      = False         # whether render the window from the original envs or not
         self.visualize   = True         # whether do online plotting and stuff or not
         self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
 
