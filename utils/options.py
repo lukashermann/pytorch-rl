@@ -34,7 +34,7 @@ class Params(object):   # NOTE: shared across all modules
         self.timestamp   = "17071703"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 7
+        self.config      = 9
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
@@ -63,7 +63,7 @@ class Params(object):   # NOTE: shared across all modules
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 1
+            self.num_processes      = 8
 
             self.hist_len           = 1
             self.hidden_dim         = 128
