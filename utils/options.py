@@ -20,8 +20,9 @@ CONFIGS = [
 [ "dqn",      "atari",     "BreakoutDeterministic-v3", "cnn",      "sequential"],  # 4
 [ "a3c",      "atari",     "PongDeterministic-v4",     "a3c-cnn",  "none"      ],  # 5
 [ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mlp",  "none"      ],  # 6
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-mjc",  "none"      ],  # 7
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ]   # 8
+[ "empty",    "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 7
+[ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 8
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ]   # 9
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -30,14 +31,14 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas-laptop"  # "machine_id"
-        self.timestamp   = "17071601"   # "yymmdd##"
+        self.timestamp   = "17071702"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 8
+        self.config      = 9
 
         self.seed        = 123
-        self.render      = False         # whether render the window from the original envs or not
-        self.visualize   = False         # whether do online plotting and stuff or not
+        self.render      = True         # whether render the window from the original envs or not
+        self.visualize   = True         # whether do online plotting and stuff or not
         self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
@@ -62,7 +63,7 @@ class Params(object):   # NOTE: shared across all modules
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 8
+            self.num_processes      = 1
 
             self.hist_len           = 1
             self.hidden_dim         = 128
@@ -211,6 +212,19 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.train_interval      = 4
         elif self.agent_type == "a3c" and self.env_type == "atari-ram" or \
              self.agent_type == "a3c" and (self.env_type == "atari" or self.env_type == "gym"):
+            self.steps               = 20000000 # max #iterations
+            self.early_stop          = None     # max #steps per episode
+            self.gamma               = 0.99
+            self.clip_grad           = 40.
+            self.lr                  = 0.0001
+            self.eval_freq           = 60       # NOTE: here means every this many seconds
+            self.eval_steps          = 3000
+            self.prog_freq           = self.eval_freq
+            self.test_nepisodes      = 10
+
+            self.rollout_steps       = 20       # max look-ahead steps in a single rollout
+            self.tau                 = 1.
+        elif self.agent_type == "a3c" and self.env_type == "mujoco":
             self.steps               = 20000000 # max #iterations
             self.early_stop          = None     # max #steps per episode
             self.gamma               = 0.99

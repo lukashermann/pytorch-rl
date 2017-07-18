@@ -41,12 +41,13 @@ def preprocessAtari(frame):
 
 def preprocessMujoco(frame):
     # resize from 500x500 to 42x42
+    #cv2.imshow("w",frame)
+    #cv2.waitKey(1)
+    frame = cv2.resize(frame, (80, 80))
     frame = cv2.resize(frame, (42,42))
     frame = frame.mean(2)
     frame = frame.astype(np.float32)
     frame*= (1. / 255.)
-    #cv2.imshow("w",frame)
-    #cv2.waitKey(1)
     return frame
 
 # TODO: check the order rgb to confirm

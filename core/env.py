@@ -263,7 +263,6 @@ class MujocoEnv(Env):  # pixel-level inputs
         self.preprocess_mode = args.preprocess_mode if not None else 0 # 0(crop&resize) 
         assert self.hei_state == self.wid_state
         self.logger.warning("State  Space: (" + str(self.state_shape) + " * " + str(self.state_shape) + ")")
-
     def _preprocessState(self, state):
         if self.preprocess_mode == 0:   # crop then resize
             state = preprocessMujoco(state)
