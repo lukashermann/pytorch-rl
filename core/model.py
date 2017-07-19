@@ -372,7 +372,7 @@ class A3CCnnMjcModel(Model):
         super(A3CCnnMjcModel, self).__init__(args)
         # build model
         # 0. feature layers
-        self.conv1 = nn.Conv2d(self.input_dims[0], 32, kernel_size=3, stride=2) # NOTE: for pkg="atari"
+        self.conv1 = nn.Conv2d(self.input_dims[0], 32, kernel_size=3, stride=2) 
         self.rl1   = nn.ReLU()
         self.conv2 = nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1)
         self.rl2   = nn.ReLU()
@@ -380,16 +380,19 @@ class A3CCnnMjcModel(Model):
         self.rl3   = nn.ReLU()
         self.conv4 = nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1)
         self.rl4   = nn.ReLU()
+
+        # lstm
         if self.enable_lstm:
             self.lstm  = nn.LSTMCell(3*3*32, self.hidden_dim, 1)
+        
         # 1. policy output
-        self.policy_5 = nn.Linear(self.hidden_dim, self.output_dims)
-        self.policy_6 = nn.Softmax()
+        self.policy_5   = nn.Linear(self.hidden_dim, self.output_dims)
+        self.policy_sig = nn.Linear(self.hidden_dim, self.output_dims)
+        self.softplus = nn.Softplus()
         # 2. value output
-        self.value_5  = nn.Linear(self.hidden_dim, 1)
+        self.value_5    = nn.Linear(self.hidden_dim, 1)
 
         self._reset()
-        print("output dim: ", self.output_dims)
 
     def _init_weights(self):
         self.apply(init_weights)
@@ -397,9 +400,10 @@ class A3CCnnMjcModel(Model):
         self.policy_5.bias.data.fill_(0)
         self.value_5.weight.data = normalized_columns_initializer(self.value_5.weight.data, 1.0)
         self.value_5.bias.data.fill_(0)
-
+        
         self.lstm.bias_ih.data.fill_(0)
         self.lstm.bias_hh.data.fill_(0)
+        
 
     def forward(self, x, lstm_hidden_vb=None):
         x = x.view(x.size(0), self.input_dims[0], self.input_dims[1], self.input_dims[1])
@@ -408,12 +412,40 @@ class A3CCnnMjcModel(Model):
         x = self.rl3(self.conv3(x))
         x = self.rl4(self.conv4(x))
         x = x.view(-1, 3*3*32)
-        if self.enable_lstm:
+        print("here1")
+        print(lstm_hidden_vb.size)
+        if self.enable_lstm: 
             x, c = self.lstm(x, lstm_hidden_vb)
-        p = self.policy_5(x)
-        p = self.policy_6(p)
-        v = self.value_5(x)
+        print("here2")
+        """
+        p = x.view(x.size(0), self.input_dims[0] * self.input_dims[1])
+        p = self.rl1(self.fc1(p))
+        p = self.rl2(self.fc2(p))
+        p = self.rl3(self.fc3(p))
+        p = self.rl4(self.fc4(p))
+        p = p.view(-1, self.hidden_dim)
         if self.enable_lstm:
-            return p, v, (x, c)
+            p_, v_ = torch.split(lstm_hidden_vb[0],1)
+            c_p, c_v = torch.split(lstm_hidden_vb[1],1)
+            p, c_p = self.lstm(p, (p_, c_p))
+        """
+        p_out = self.policy_5(x)
+        sig = self.policy_sig(x)
+        sig = self.softplus(sig)
+        print("here3")
+        """
+        v = x.view(x.size(0), self.input_dims[0] * self.input_dims[1])
+        v = self.rl1_v(self.fc1_v(v))
+        v = self.rl2_v(self.fc2_v(v))
+        v = self.rl3_v(self.fc3_v(v))
+        v = self.rl4_v(self.fc4_v(v))
+        v = v.view(-1, self.hidden_dim)
+        if self.enable_lstm:
+            v, c_v = self.lstm(v, (v_, c_v))
+        """
+        v_out = self.value_5(x)
+        
+        if self.enable_lstm:
+            return p_out, sig, v_out, (x,c)
         else:
-            return p, v
+            return p_out, sig, v_out

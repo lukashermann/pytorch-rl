@@ -22,7 +22,8 @@ CONFIGS = [
 [ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mlp",  "none"      ],  # 6
 [ "empty",    "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 7
 [ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 8
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ]   # 9
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ],   # 9
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc",      "none"      ]   # 10
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -31,10 +32,10 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas-laptop"  # "machine_id"
-        self.timestamp   = "17071703"   # "yymmdd##"
+        self.timestamp   = "17071900"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 9
+        self.config      = 10
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
@@ -59,11 +60,11 @@ class Params(object):   # NOTE: shared across all modules
             self.dtype              = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
         elif self.agent_type == "a3c":
             self.enable_lstm        = True
-            if self.model_type == "a3c-mjc":    # NOTE: should be set to True when training Mujoco envs
+            if self.model_type == "a3c-mjc" or self.model_type == "a3c-cnn-mjc":    # NOTE: should be set to True when training Mujoco envs
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 8
+            self.num_processes      = 1
 
             self.hist_len           = 1
             self.hidden_dim         = 128
