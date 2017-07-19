@@ -4,6 +4,7 @@ import numpy as np
 from copy import deepcopy
 from gym.spaces.box import Box
 import inspect
+from sklearn.utils.extmath import cartesian
 
 from utils.helpers import Experience            # NOTE: here state0 is always "None"
 from utils.helpers import preprocessAtari, rgb2gray, rgb2y, scale, preprocessMujoco
@@ -239,11 +240,13 @@ class AtariEnv(Env):  # pixel-level inputs
         return self._get_experience()
 
     def step(self, action_index):
+        print(action_index)
+
         self.exp_action = action_index
         self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.actions[self.exp_action])
         return self._get_experience()
     
-class MujocoEnv(Env):  # pixel-level inputs
+class MujocoEnv(Env):  # pixel-level inputs, Discrete
     def __init__(self, args, env_ind=0):
         super(MujocoEnv, self).__init__(args, env_ind)
 
@@ -255,7 +258,7 @@ class MujocoEnv(Env):  # pixel-level inputs
         self.env.seed(self.seed)    # NOTE: so each env would be different
 
         # action space setup
-        self.actions     = range(self.action_dim)
+        self.actions     = self._setup_actions()
         self.logger.warning("Action Space: %s", self.actions)
         # state space setup
         self.hei_state = args.hei_state
@@ -263,6 +266,20 @@ class MujocoEnv(Env):  # pixel-level inputs
         self.preprocess_mode = args.preprocess_mode if not None else 0 # 0(crop&resize) 
         assert self.hei_state == self.wid_state
         self.logger.warning("State  Space: (" + str(self.state_shape) + " * " + str(self.state_shape) + ")")
+    
+    def _setup_actions(self):
+        # discretize continuous action space
+        dof =self.env.action_space.shape[0]
+        discr_steps = 3
+        actions = range(discr_steps**dof)
+        possible_actions = [self.env.action_space.low[0],0,self.env.action_space.high[0]]
+        self.continuous_actions = np.array(cartesian([possible_actions]*dof))
+        print(self.continuous_actions)
+        return actions
+
+    def _discrete_to_continuous(self, action_index):   
+        return self.continuous_actions[action_index]
+
     def _preprocessState(self, state):
         if self.preprocess_mode == 0:   # crop then resize
             state = preprocessMujoco(state)
@@ -294,8 +311,8 @@ class MujocoEnv(Env):  # pixel-level inputs
         return self._get_experience()
 
     def step(self, action_index):
-        self.exp_action = action_index
-        self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.actions[self.exp_action])
+        self.exp_action = self._discrete_to_continuous(action_index)
+        self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
         return self._get_experience()
 
 class LabEnv(Env):
