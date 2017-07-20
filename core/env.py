@@ -256,9 +256,18 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
 
         self.env = gym.make(self.game)
         self.env.seed(self.seed)    # NOTE: so each env would be different
+        
+        # continuous space
+        if args.agent_type == "a3c":
+            self.enable_continuous = args.enable_continuous
+        else:
+            self.enable_continuous = False
 
         # action space setup
-        self.actions     = self._setup_actions()
+        if self.enable_continuous:
+            self.actions = range(self.action_dim)
+        else:
+            self.actions = self._setup_actions()
         self.logger.warning("Action Space: %s", self.actions)
         # state space setup
         self.hei_state = args.hei_state
@@ -305,14 +314,17 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         return self.env.action_space.sample()
 
     def reset(self):
-        # TODO: could add random start here, since random start only make sense for atari games
         self._reset_experience()
         self.exp_state1 = self.env.reset()
         return self._get_experience()
 
     def step(self, action_index):
-        self.exp_action = self._discrete_to_continuous(action_index)
-        self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
+        if self.enable_continuous:
+            self.exp_action = action_index
+            self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
+        else:
+            self.exp_action = self._discrete_to_continuous(action_index)
+            self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
         return self._get_experience()
 
 class LabEnv(Env):
