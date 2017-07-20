@@ -32,13 +32,13 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu1"  # "machine_id"
-        self.timestamp   = "17072000"   # "yymmdd##"
+        self.timestamp   = "17072001"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 10
 
         self.seed        = 123
-        self.render      = False         # whether render the window from the original envs or not
+        self.render      = True         # whether render the window from the original envs or not
         self.visualize   = True         # whether do online plotting and stuff or not
         self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
 
@@ -231,7 +231,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 40.
             self.lr                  = 0.0001
-            self.eval_freq           = 10       # NOTE: here means every this many seconds
+            self.eval_freq           = 2       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
             self.test_nepisodes      = 10

@@ -7,12 +7,13 @@ import math
 
 import torch
 import torch.multiprocessing as mp
+import threading as th
 from torch.autograd import Variable
 import torch.nn.functional as F
 
 from utils.helpers import Experience, AugmentedExperience, one_hot
 
-class A3CSingleProcess(mp.Process):
+class A3CSingleProcess(th.Thread):
     def __init__(self, master, process_id=0):
         super(A3CSingleProcess, self).__init__(name = "Process-%d" % process_id)
         # NOTE: self.master.* refers to parameters shared across all processes
