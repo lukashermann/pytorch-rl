@@ -276,12 +276,19 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         assert self.hei_state == self.wid_state
         self.logger.warning("State  Space: (" + str(self.state_shape) + " * " + str(self.state_shape) + ")")
 
+    @property
+    def action_dim(self):
+        if self.enable_continuous:
+            return self.env.action_space.shape[0]
+        else:
+            return len(self.actions)
+
     def _setup_actions(self):
         # discretize continuous action space
         dof =self.env.action_space.shape[0]
         discr_steps = 3
         actions = range(discr_steps**dof)
-        possible_actions = [0,self.env.action_space.low[0]*0.2,self.env.action_space.low[0],self.env.action_space.high[0]*0.2,self.env.action_space.high[0]]
+        possible_actions = [0,self.env.action_space.low[0]*0.5,self.env.action_space.high[0]*0.5]
         self.continuous_actions = np.array(cartesian([possible_actions]*dof))
         print(self.continuous_actions)
         return actions
