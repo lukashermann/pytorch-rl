@@ -3,3 +3,4 @@ core/agents/*.pyc
 utils/*.pyc
 models/*
 logs/*
+MUJOCO_LOG.TXT
