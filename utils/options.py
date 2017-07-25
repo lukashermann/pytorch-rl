@@ -22,7 +22,7 @@ CONFIGS = [
 [ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mlp",  "none"      ],  # 6
 [ "empty",    "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 7
 [ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 8
-[ "a3c",      "mujoco",    "ReacherPixel-v1",      "a3c-cnn",      "none"      ],   # 9
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ],   # 9
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc",      "none"      ]   # 10
 ]
 
@@ -32,7 +32,7 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu1"  # "machine_id"
-        self.timestamp   = "17072401"   # "yymmdd##"
+        self.timestamp   = "17072501"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 10
@@ -64,7 +64,7 @@ class Params(object):   # NOTE: shared across all modules
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 1
+            self.num_processes      = 16
 
             self.hist_len           = 1
             self.hidden_dim         = 128
@@ -231,7 +231,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 40.
             self.lr                  = 0.0001
-            self.eval_freq           = 2       # NOTE: here means every this many seconds
+            self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
             self.test_nepisodes      = 10

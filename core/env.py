@@ -245,7 +245,7 @@ class AtariEnv(Env):  # pixel-level inputs
         self.exp_action = action_index
         self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.actions[self.exp_action])
         return self._get_experience()
-    
+
 class MujocoEnv(Env):  # pixel-level inputs, Discrete
     def __init__(self, args, env_ind=0):
         super(MujocoEnv, self).__init__(args, env_ind)
@@ -256,7 +256,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
 
         self.env = gym.make(self.game)
         self.env.seed(self.seed)    # NOTE: so each env would be different
-        
+
         # continuous space
         if args.agent_type == "a3c":
             self.enable_continuous = args.enable_continuous
@@ -272,21 +272,21 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         # state space setup
         self.hei_state = args.hei_state
         self.wid_state = args.wid_state
-        self.preprocess_mode = args.preprocess_mode if not None else 0 # 0(crop&resize) 
+        self.preprocess_mode = args.preprocess_mode if not None else 0 # 0(crop&resize)
         assert self.hei_state == self.wid_state
         self.logger.warning("State  Space: (" + str(self.state_shape) + " * " + str(self.state_shape) + ")")
-    
+
     def _setup_actions(self):
         # discretize continuous action space
         dof =self.env.action_space.shape[0]
         discr_steps = 3
         actions = range(discr_steps**dof)
-        possible_actions = [self.env.action_space.low[0],0,self.env.action_space.high[0]]
+        possible_actions = [0,self.env.action_space.low[0]*0.2,self.env.action_space.low[0],self.env.action_space.high[0]*0.2,self.env.action_space.high[0]]
         self.continuous_actions = np.array(cartesian([possible_actions]*dof))
         print(self.continuous_actions)
         return actions
 
-    def _discrete_to_continuous(self, action_index):   
+    def _discrete_to_continuous(self, action_index):
         return self.continuous_actions[action_index]
 
     def _preprocessState(self, state):
@@ -332,4 +332,3 @@ class LabEnv(Env):
         super(LabEnv, self).__init__(args, env_ind)
 
         assert self.env_type == "lab"
-
