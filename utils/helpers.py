@@ -39,16 +39,40 @@ def preprocessAtari(frame):
     frame*= (1. / 255.)
     return frame
 
-def preprocessMujoco(frame):
-    # resize from 500x500 to 42x42
+def preprocessRgb(img,height, width):
+    # resize from 500x500 to heightxwidth
+    # convert to grayscale
+    img = cv2.resize(img, (height*2, width*2))
+    img = cv2.resize(img, (height,width))
+    img = img.mean(2)
+    img = img.astype(np.float32)
+    img*= (1. / 255.)
+    return img
+def preprocessDepth(img, height, width):
+    img /= img.max()
+    img = cv2.resize(img, (height, width), interpolation = cv2.INTER_NEAREST)
+    return img
+
+def preprocessMujocoRgb(ob, height, width):
+    # only take RGB img
+
     #cv2.imshow("w",frame)
     #cv2.waitKey(1)
-    frame = cv2.resize(frame, (80, 80))
-    frame = cv2.resize(frame, (42,42))
-    frame = frame.mean(2)
-    frame = frame.astype(np.float32)
-    frame*= (1. / 255.)
+    frame = preprocessRgb(ob[0], height, width)
     return frame
+
+def preprocessMujocoRgbd(ob, height, width):
+    rgb = preprocessRgb(ob[0], height, width)
+    depth = preprocessDepth(ob[1], height, width)
+    frame = np.zeros((height, width,2))
+    frame[:,:,0] = rgb
+    frame[:,:,1] = depth
+    return frame
+
+def preprocessMujocoRgbdLow(ob,height, width):
+    # return [rgbd, low level observations]
+    frame = preprocessMujocoRgbd(ob, height, width)
+    return [frame, ob[2]]
 
 # TODO: check the order rgb to confirm
 def rgb2gray(rgb):

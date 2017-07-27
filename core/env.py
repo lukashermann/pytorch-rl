@@ -7,7 +7,7 @@ import inspect
 from sklearn.utils.extmath import cartesian
 
 from utils.helpers import Experience            # NOTE: here state0 is always "None"
-from utils.helpers import preprocessAtari, rgb2gray, rgb2y, scale, preprocessMujoco
+from utils.helpers import preprocessAtari, rgb2gray, rgb2y, scale, preprocessMujocoRgb, preprocessMujocoRgbd, preprocessMujocoRgbdLow
 
 class Env(object):
     def __init__(self, args, env_ind=0):
@@ -272,7 +272,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         # state space setup
         self.hei_state = args.hei_state
         self.wid_state = args.wid_state
-        self.preprocess_mode = args.preprocess_mode if not None else 0 # 0(crop&resize)
+        self.preprocess_mode = args.preprocess_mode if not None else 0 # 0 RGB | 1 RGBD | 2 RGBD + Low Level
         assert self.hei_state == self.wid_state
         self.logger.warning("State  Space: (" + str(self.state_shape) + " * " + str(self.state_shape) + ")")
 
@@ -297,9 +297,13 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         return self.continuous_actions[action_index]
 
     def _preprocessState(self, state):
-        if self.preprocess_mode == 0:   # crop then resize
-            state = preprocessMujoco(state)
-        return state.reshape(self.hei_state * self.wid_state)
+        if self.preprocess_mode == 0:   # RGB
+            state = preprocessMujocoRgb(state,self.hei_state, self.wid_state)
+        elif self.preprocess_mode == 1: # RGBD
+            state = preprocessMujocoRgbd(state,self.hei_state, self.wid_state)
+        else: # RGBD + Low Level observation
+            state = preprocessMujocoRgbdLow(state,self.hei_state, self.wid_state)
+        return state#.reshape(self.hei_state * self.wid_state)
 
     @property
     def state_shape(self):
