@@ -267,7 +267,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         if self.enable_continuous:
             self.actions = range(self.action_dim)
         else:
-            self.actions = self._setup_actions()
+            self.actions = self._setup_actions2()
         self.logger.warning("Action Space: %s", self.actions)
         # state space setup
         self.hei_state = args.hei_state
@@ -293,6 +293,22 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         print(self.continuous_actions)
         return actions
 
+    def _setup_actions2(self):
+        # discretize continuous action space
+        dof =self.env.action_space.shape[0]
+        discr_steps = 11
+        assert discr_steps % 2 == 1 and discr_steps >= 3
+        actions = range(discr_steps**dof)
+        possible_actions = [0]
+        low = self.env.action_space.low[0]
+        high = self.env.action_space.high[0]
+        for i in range(int((discr_steps - 1) / 2)):
+            possible_actions.append(high - i*(high/((discr_steps-1)/2)))
+            possible_actions.append(low - i*(low/((discr_steps-1)/2)))
+        self.continuous_actions = np.array(cartesian([possible_actions]*dof))
+        print(self.continuous_actions)
+        return actions
+
     def _discrete_to_continuous(self, action_index):
         return self.continuous_actions[action_index]
 
@@ -313,9 +329,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         return self.env.render()
 
     def visual(self):
-        #print(self.exp_state1[0][:10,0:10])
         if self.visualize:
-            print(type(self.exp_state1))
             self.win_state1 = self.vis.image(np.transpose(self.exp_state1[0], (2, 0, 1)), env=self.refs, win=self.win_state1, opts=dict(title="state1"))
         if self.mode == 2:
             frame_name = self.img_dir + "frame_%04d.jpg" % self.frame_ind
