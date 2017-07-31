@@ -32,10 +32,10 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu1"  # "machine_id"
-        self.timestamp   = "17072701"   # "yymmdd##"
+        self.timestamp   = "17073101"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 9
+        self.config      = 10
 
         self.seed        = 123
         self.render      = True         # whether render the window from the original envs or not
@@ -124,7 +124,7 @@ class EnvParams(Params):    # settings for simulation environment
         elif self.env_type == "mujoco":
             self.hei_state = 42
             self.wid_state = 42
-            self.preprocess_mode = 2
+            self.preprocess_mode = 0
         else:
             assert False, "env_type must be: gym | atari-ram | atari | lab | mujoco"
 

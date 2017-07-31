@@ -303,7 +303,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
             state = preprocessMujocoRgbd(state,self.hei_state, self.wid_state)
         else: # RGBD + Low Level observation
             state = preprocessMujocoRgbdLow(state,self.hei_state, self.wid_state)
-        return state#.reshape(self.hei_state * self.wid_state)
+        return state.reshape(self.hei_state * self.wid_state)
 
     @property
     def state_shape(self):
@@ -313,11 +313,13 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         return self.env.render()
 
     def visual(self):
+        #print(self.exp_state1[0][:10,0:10])
         if self.visualize:
-            self.win_state1 = self.vis.image(np.transpose(self.exp_state1, (2, 0, 1)), env=self.refs, win=self.win_state1, opts=dict(title="state1"))
+            print(type(self.exp_state1))
+            self.win_state1 = self.vis.image(np.transpose(self.exp_state1[0], (2, 0, 1)), env=self.refs, win=self.win_state1, opts=dict(title="state1"))
         if self.mode == 2:
             frame_name = self.img_dir + "frame_%04d.jpg" % self.frame_ind
-            self.imsave(frame_name, self.exp_state1)
+            self.imsave(frame_name, self.exp_state1[0])
             self.logger.warning("Saved  Frame    @ Step: " + str(self.frame_ind) + " To: " + frame_name)
             self.frame_ind += 1
 
