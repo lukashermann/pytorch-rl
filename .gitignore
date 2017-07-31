@@ -5,3 +5,4 @@ models/*
 logs/*
 MUJOCO_LOG.TXT
 *~
+figs/*
