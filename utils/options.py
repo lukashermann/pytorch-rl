@@ -19,7 +19,7 @@ CONFIGS = [
 [ "dqn",      "atari",     "PongDeterministic-v4",     "cnn",      "sequential"],  # 3
 [ "dqn",      "atari",     "BreakoutDeterministic-v3", "cnn",      "sequential"],  # 4
 [ "a3c",      "atari",     "PongDeterministic-v4",     "a3c-cnn",  "none"      ],  # 5
-[ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mlp",  "none"      ],  # 6
+[ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mjc",  "none"      ],  # 6
 [ "empty",    "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 7
 [ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 8
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ],   # 9
@@ -31,11 +31,11 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aiscpu1"  # "machine_id"
-        self.timestamp   = "17073101"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu5"  # "machine_id"
+        self.timestamp   = "17080105"   # "yymmdd##"
         # training configuration
-        self.mode        = 2            # 1(train) | 2(test model_file)
-        self.config      = 10
+        self.mode        = 1            # 1(train) | 2(test model_file)
+        self.config      = 6
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
@@ -230,13 +230,13 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.early_stop          = None     # max #steps per episode
             self.gamma               = 0.99
             self.clip_grad           = 40.
-            self.lr                  = 0.00001
+            self.lr                  = 0.0001
             self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
             self.test_nepisodes      = 10
 
-            self.rollout_steps       = 20       # max look-ahead steps in a single rollout
+            self.rollout_steps       = 50       # max look-ahead steps in a single rollout
             self.tau                 = 1.
         else:
             self.steps               = 1000000  # max #iterations
