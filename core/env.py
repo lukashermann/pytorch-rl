@@ -4,6 +4,7 @@ import numpy as np
 from copy import deepcopy
 from gym.spaces.box import Box
 import inspect
+import cv2
 from sklearn.utils.extmath import cartesian
 
 from utils.helpers import Experience            # NOTE: here state0 is always "None"
