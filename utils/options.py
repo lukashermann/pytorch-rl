@@ -31,8 +31,8 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aiscpu5"  # "machine_id"
-        self.timestamp   = "17080105"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu1"  # "machine_id"
+        self.timestamp   = "17080201"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 6
@@ -40,7 +40,7 @@ class Params(object):   # NOTE: shared across all modules
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
         self.visualize   = True         # whether do online plotting and stuff or not
-        self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
+        self.save_best   = True        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
 
@@ -86,7 +86,7 @@ class Params(object):   # NOTE: shared across all modules
         # NOTE: will save the current model to model_name
         self.model_name  = self.root_dir + "/models/" + self.refs + ".pth"
         # NOTE: will load pretrained model_file if not None
-        self.model_file  = None#self.root_dir + "/models/{TODO:FILL_IN_PRETAINED_MODEL_FILE}.pth"
+        self.model_file  = None#self.root_dir + "/models/lukas_aiscpu1_17080201.pth"
         if self.mode == 2:
             self.model_file  = self.model_name  # NOTE: so only need to change self.mode to 2 to test the current training
             assert self.model_file is not None, "Pre-Trained model is None, Testing aborted!!!"
@@ -218,6 +218,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 40.
             self.lr                  = 0.0001
+            self.weight_decay        = 1e-4
             self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
@@ -231,12 +232,13 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 40.
             self.lr                  = 0.0001
+            self.weight_decay        = 1e-4
             self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
             self.test_nepisodes      = 10
 
-            self.rollout_steps       = 50       # max look-ahead steps in a single rollout
+            self.rollout_steps       = 20       # max look-ahead steps in a single rollout
             self.tau                 = 1.
         else:
             self.steps               = 1000000  # max #iterations

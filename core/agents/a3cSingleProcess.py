@@ -119,7 +119,7 @@ class A3CLearner(A3CSingleProcess):
         super(A3CLearner, self).__init__(master, process_id)
 
         # learning algorithm    # TODO: adjust learning to each process maybe ???
-        self.optimizer = self.master.optim(self.model.parameters(), lr = self.master.lr)
+        self.optimizer = self.master.optim(self.model.parameters(), lr = self.master.lr, weight_decay = self.master.weight_decay)
 
         self._reset_rollout()
 
