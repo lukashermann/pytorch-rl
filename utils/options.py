@@ -31,11 +31,11 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aiscpu1"  # "machine_id"
-        self.timestamp   = "17080201"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu5"  # "machine_id"
+        self.timestamp   = "17080305"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 6
+        self.config      = 10
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
