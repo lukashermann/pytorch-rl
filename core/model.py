@@ -440,9 +440,9 @@ class A3CCnnMjcModel(Model):
         """
         x = x.view(x.size(0), self.input_dims[0], self.input_dims[1], self.input_dims[1])
 
-        x = self.rl1(self.conv1(x))
+        x = (self.conv1(x))
         x = self.rl2(self.conv2(x))
-        x = self.rl3(self.conv3(x))
+        x = (self.conv3(x))
         x = self.rl4(self.conv4(x))
         p = x.view(-1, 3*3*32)
 
