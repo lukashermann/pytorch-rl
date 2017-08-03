@@ -23,7 +23,8 @@ CONFIGS = [
 [ "empty",    "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 7
 [ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 8
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ],   # 9
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc",      "none"      ]   # 10
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc",      "none"      ],   # 10
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc2",      "none"      ]   # 11
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -31,11 +32,11 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aiscpu1"  # "machine_id"
-        self.timestamp   = "17080201"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu3"  # "machine_id"
+        self.timestamp   = "17080303"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 6
+        self.config      = 11
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
@@ -60,7 +61,7 @@ class Params(object):   # NOTE: shared across all modules
             self.dtype              = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
         elif self.agent_type == "a3c":
             self.enable_lstm        = True
-            if self.model_type == "a3c-mjc" or self.model_type == "a3c-cnn-mjc":    # NOTE: should be set to True when training Mujoco envs
+            if self.model_type == "a3c-mjc" or self.model_type == "a3c-cnn-mjc" or self.model_type == "a3c-cnn-mjc2":    # NOTE: should be set to True when training Mujoco envs
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
@@ -121,7 +122,11 @@ class EnvParams(Params):    # settings for simulation environment
             self.wid_state = 80
             self.preprocess_mode = 3  # 0(nothing) | 1(rgb2gray) | 2(rgb2y) | 3(crop&resize depth)
             self.img_encoding_type = "passthrough"
-        elif self.env_type == "mujoco":
+        elif self.env_type == "mujoco" and  self.model_type == "a3c-cnn-mjc2":
+            self.hei_state = 84
+            self.wid_state = 84
+            self.preprocess_mode = 0
+        elif self.env_type == "mujoco" and  self.model_type != "a3c-cnn-mjc2":
             self.hei_state = 42
             self.wid_state = 42
             self.preprocess_mode = 0
