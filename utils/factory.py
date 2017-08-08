@@ -8,12 +8,13 @@ EnvDict = {"gym":       GymEnv,                 # classic control games from ope
            "lab":       LabEnv,
            "mujoco":    MujocoEnv}
 
-from core.model import MlpModel, CnnModel, A3CMlpModel, A3CCnnModel, A3CMjcModel,A3CCnnMjcModel
+from core.model import MlpModel, CnnModel, A3CMlpModel, A3CCnnModel, A3CMjcModel,A3CCnnMjcModel,A3CCnnMjcModel2
 ModelDict = {"mlp":     MlpModel,               # for full-state  input envs
              "cnn":     CnnModel,               # for pixel-level input envs
              "a3c-mlp": A3CMlpModel,            # for full-state  input envs
              "a3c-cnn": A3CCnnModel,            # for pixel-level input envs
              "a3c-cnn-mjc": A3CCnnMjcModel,     # for pixel-level mujoco continuous envs
+             "a3c-cnn-mjc2": A3CCnnMjcModel2,     # for pixel-level mujoco continuous envs
              "a3c-mjc": A3CMjcModel}            # for mujoco continuous
 
 from core.memory import SequentialMemory

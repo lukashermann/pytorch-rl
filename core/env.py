@@ -320,7 +320,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
             state = preprocessMujocoRgbd(state,self.hei_state, self.wid_state)
         else: # RGBD + Low Level observation
             state = preprocessMujocoRgbdLow(state,self.hei_state, self.wid_state)
-        return state.reshape(self.hei_state * self.wid_state)
+        return state#.reshape(self.hei_state * self.wid_state)
 
     @property
     def state_shape(self):

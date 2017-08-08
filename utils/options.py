@@ -23,7 +23,8 @@ CONFIGS = [
 [ "empty",    "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 7
 [ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 8
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ],   # 9
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc",      "none"      ]   # 10
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc",      "none"      ],   # 10
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc2",      "none"      ]   # 11
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -31,16 +32,16 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aiscpu5"  # "machine_id"
-        self.timestamp   = "17080105"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu3"  # "machine_id"
+        self.timestamp   = "17080303"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 6
+        self.config      = 11
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
         self.visualize   = True         # whether do online plotting and stuff or not
-        self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
+        self.save_best   = True        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
 
@@ -60,7 +61,7 @@ class Params(object):   # NOTE: shared across all modules
             self.dtype              = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
         elif self.agent_type == "a3c":
             self.enable_lstm        = True
-            if self.model_type == "a3c-mjc" or self.model_type == "a3c-cnn-mjc":    # NOTE: should be set to True when training Mujoco envs
+            if self.model_type == "a3c-mjc" or self.model_type == "a3c-cnn-mjc" or self.model_type == "a3c-cnn-mjc2":    # NOTE: should be set to True when training Mujoco envs
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
@@ -86,7 +87,7 @@ class Params(object):   # NOTE: shared across all modules
         # NOTE: will save the current model to model_name
         self.model_name  = self.root_dir + "/models/" + self.refs + ".pth"
         # NOTE: will load pretrained model_file if not None
-        self.model_file  = None#self.root_dir + "/models/{TODO:FILL_IN_PRETAINED_MODEL_FILE}.pth"
+        self.model_file  = None#self.root_dir + "/models/lukas_aiscpu1_17080201.pth"
         if self.mode == 2:
             self.model_file  = self.model_name  # NOTE: so only need to change self.mode to 2 to test the current training
             assert self.model_file is not None, "Pre-Trained model is None, Testing aborted!!!"
@@ -121,7 +122,11 @@ class EnvParams(Params):    # settings for simulation environment
             self.wid_state = 80
             self.preprocess_mode = 3  # 0(nothing) | 1(rgb2gray) | 2(rgb2y) | 3(crop&resize depth)
             self.img_encoding_type = "passthrough"
-        elif self.env_type == "mujoco":
+        elif self.env_type == "mujoco" and  self.model_type == "a3c-cnn-mjc2":
+            self.hei_state = 84
+            self.wid_state = 84
+            self.preprocess_mode = 0
+        elif self.env_type == "mujoco" and  self.model_type != "a3c-cnn-mjc2":
             self.hei_state = 42
             self.wid_state = 42
             self.preprocess_mode = 0
@@ -218,6 +223,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 40.
             self.lr                  = 0.0001
+            self.weight_decay        = 1e-4
             self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
@@ -231,12 +237,13 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 40.
             self.lr                  = 0.0001
+            self.weight_decay        = 1e-4
             self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
             self.test_nepisodes      = 10
 
-            self.rollout_steps       = 50       # max look-ahead steps in a single rollout
+            self.rollout_steps       = 20       # max look-ahead steps in a single rollout
             self.tau                 = 1.
         else:
             self.steps               = 1000000  # max #iterations

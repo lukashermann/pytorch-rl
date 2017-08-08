@@ -24,7 +24,7 @@ class A3CAgent(Agent):
         self.model.share_memory()           # NOTE
 
         # learning algorithm # TODO: could also linearly anneal learning rate
-        self.optimizer = self.optim(self.model.parameters(), lr = self.lr)
+        self.optimizer = self.optim(self.model.parameters(), lr = self.lr, weight_decay = self.weight_decay)
         self.optimizer.share_memory()       # NOTE
 
         # global counters
