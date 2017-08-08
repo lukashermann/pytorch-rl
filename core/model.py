@@ -278,6 +278,53 @@ class A3CCnnModel(Model):
         else:
             return p, v
 
+class A3CCnnModel2(Model):
+    def __init__(self, args):
+        super(A3CCnnModel, self).__init__(args)
+        # build model
+        # 0. feature layers
+        # Input Dim 64x64
+        self.conv1 = nn.Conv2d(self.input_dims[0], 16, kernel_size=8, stride=4) # NOTE: for pkg="atari"
+        self.rl1   = nn.ReLU()
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2)
+        self.rl2   = nn.ReLU()
+        self.policy_3 = nn.Linear(6*6*32, self.hidden_dim)
+        self.lstm  = nn.LSTMCell(self.hidden_dim, self.hidden_dim, 1)
+        # 1. policy output
+        self.policy_4 = nn.Linear(self.hidden_dim, self.output_dims)
+        self.policy_5_0 = nn.Softmax()
+        # 2. value output
+        self.value_5  = nn.Linear(self.hidden_dim, 1)
+
+        self._reset()
+
+    def _init_weights(self):
+        self.apply(init_weights)
+        self.policy_5.weight.data = normalized_columns_initializer(self.policy_5.weight.data, 0.01)
+        self.policy_5.bias.data.fill_(0)
+        self.value_5.weight.data = normalized_columns_initializer(self.value_5.weight.data, 1.0)
+        self.value_5.bias.data.fill_(0)
+
+        self.lstm.bias_ih.data.fill_(0)
+        self.lstm.bias_hh.data.fill_(0)
+
+    def forward(self, x, lstm_hidden_vb=None):
+        x = x.view(x.size(0), self.input_dims[0], self.input_dims[1], self.input_dims[1])
+        x = self.rl1(self.conv1(x))
+        x = self.rl2(self.conv2(x))
+        x = self.rl3(self.conv3(x))
+        x = self.rl4(self.conv4(x))
+        x = x.view(-1, 3*3*32)
+        if self.enable_lstm:
+            x, c = self.lstm(x, lstm_hidden_vb)
+        p = self.policy_5(x)
+        p = self.policy_6(p)
+        v = self.value_5(x)
+        if self.enable_lstm:
+            return p, v, (x, c)
+        else:
+            return p, v
+
 class A3CMjcModel(Model):
     def __init__(self, args):
         super(A3CMjcModel, self).__init__(args)
