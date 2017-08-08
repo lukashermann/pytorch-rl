@@ -6,3 +6,4 @@ logs/*
 MUJOCO_LOG.TXT
 *~
 figs/*
+*.pyc
