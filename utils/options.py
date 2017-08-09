@@ -29,7 +29,7 @@ CONFIGS = [
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 11
 [ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-dis-mjc",      "none"      ],   # 12
 [ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con",      "none"      ],   # 13
-[ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-con",      "none"      ]   # 14
+[ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-con64",      "none"      ]   # 14
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -37,11 +37,11 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_test"  # "machine_id"
-        self.timestamp   = "17080903"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu3"  # "machine_id"
+        self.timestamp   = "17080905"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 12
+        self.config      = 14
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
@@ -70,7 +70,7 @@ class Params(object):   # NOTE: shared across all modules
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 1
+            self.num_processes      = 16
 
             self.hist_len           = 1
             self.hidden_dim         = 128

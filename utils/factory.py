@@ -19,6 +19,7 @@ from core.models.dqn_cnn import DQNCnnModel
 from core.models.a3c_mlp_con import A3CMlpConModel
 from core.models.a3c_cnn_dis import A3CCnnDisModel
 from core.models.a3c_cnn_con import A3CCnnConModel
+from core.models.a3c_cnn_con64 import A3CCnnCon64Model
 from core.models.a3c_cnn_dis_mjc import A3CCnnDisMjcModel
 from core.models.acer_mlp_dis import ACERMlpDisModel
 ModelDict = {"empty":        EmptyModel,        # contains nothing, only should be used w/ EmptyAgent
@@ -28,6 +29,7 @@ ModelDict = {"empty":        EmptyModel,        # contains nothing, only should 
              "a3c-cnn-dis":  A3CCnnDisModel,    # for a3c pixel-level  input (NOTE: discrete)
              "a3c-cnn-dis-mjc":  A3CCnnDisMjcModel,    # for a3c mujoco pixel-level  input (NOTE: discrete)
              "a3c-cnn-con":  A3CCnnConModel,    # for a3c pixel-level  input (NOTE: continuous
+             "a3c-cnn-con64":  A3CCnnCon64Model,    # for a3c pixel-level  input (NOTE: continuous
              "acer-mlp-dis": ACERMlpDisModel,   # for acer pixel-level input (NOTE: discrete)
              "none":         None}
 
