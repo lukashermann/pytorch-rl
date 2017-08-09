@@ -35,6 +35,8 @@ class Env(object):
         self.game       = args.game
         self._reset_experience()
 
+        self.dof = None # only used in mujoco env
+        self.enable_mjc_dis = False
         self.logger.warning("<-----------------------------------> Env")
         self.logger.warning("Creating {" + self.env_type + " | " + self.game + "} w/ Seed: " + str(self.seed))
 

@@ -79,7 +79,7 @@ class A3CSingleProcess(th.Thread):
         return state_vb
 
     def _forward(self, state_vb):
-        if not self.master.enable_continuous:
+        if not self.master.enable_continuous and not self.master.enable_mjc_dis:
             if self.master.enable_lstm:
                 p_vb, v_vb, self.lstm_hidden_vb = self.model(state_vb, self.lstm_hidden_vb)
             else:
@@ -91,6 +91,19 @@ class A3CSingleProcess(th.Thread):
                 action = p_vb.max(1)[1].data.squeeze().numpy()[0]
             return action, p_vb, v_vb
 
+
+        elif not self.master.enable_continuous and self.master.enable_mjc_dis:
+            p_vb_list, v_vb, self.lstm_hidden_vb = self.model(state_vb, self.lstm_hidden_vb)
+            if self.training:
+                action = []
+                for p_vb in p_vb_list:
+                    action.append(p_vb.multinomial().data[0][0])
+            else:
+                action = []
+                for p_vb in p_vb_list:
+                    action.append(p_vb.max(1)[1].data.squeeze().numpy()[0])
+            p_vb = torch.cat(p_vb_list)
+            return action, p_vb, v_vb
         # NOTE continous control p_vb here is the mu_vb of continous action dist
         else:
             if self.master.enable_lstm:
@@ -192,13 +205,23 @@ class A3CLearner(A3CSingleProcess):
             if self.master.use_cuda:
                 action_batch_vb = action_batch_vb.cuda()
             sigma_vb = self.rollout.sigmoid_vb
+        elif not self.master.enable_continuous and not self.master.enable_mjc_dis:
+            action_batch_vb = Variable(torch.from_numpy(np.array(self.rollout.action)).long())
+            if self.master.use_cuda:
+                action_batch_vb = action_batch_vb.cuda()
+            policy_log_vb = [torch.log(policy_vb[i]) for i in range(rollout_steps)]
+            entropy_vb    = [- (policy_log_vb[i] * policy_vb[i]).sum(1).mean(0) for i in range(rollout_steps)]
+            policy_log_vb = [policy_log_vb[i].gather(1, action_batch_vb[i].unsqueeze(0)) for i in range(rollout_steps) ]
+        # mujoco dicretization
         else:
             action_batch_vb = Variable(torch.from_numpy(np.array(self.rollout.action)).long())
             if self.master.use_cuda:
                 action_batch_vb = action_batch_vb.cuda()
             policy_log_vb = [torch.log(policy_vb[i]) for i in range(rollout_steps)]
-            entropy_vb    = [- (policy_log_vb[i] * policy_vb[i]).sum(1) for i in range(rollout_steps)]
-            policy_log_vb = [policy_log_vb[i].gather(1, action_batch_vb[i].unsqueeze(0)) for i in range(rollout_steps) ]
+            entropy_vb    = [- (policy_log_vb[i] * policy_vb[i]).sum(1).mean(0) for i in range(rollout_steps)]
+
+            policy_log_vb = [policy_log_vb[i].gather(1, action_batch_vb[i].unsqueeze(1)).mean() for i in range(rollout_steps) ]
+
         valueT_vb     = self._get_valueT_vb()
         self.rollout.value0_vb.append(Variable(valueT_vb.data)) # NOTE: only this last entry is Volatile, all others are still in the graph
         gae_ts        = torch.zeros(1, 1)
@@ -217,7 +240,7 @@ class A3CLearner(A3CSingleProcess):
             if self.master.enable_continuous:
                 _log_prob = self._normal(action_batch_vb[i], policy_vb[i], sigma_vb[i])
                 _entropy = 0.5*((sigma_vb[i]*2*self.pi_vb.expand_as(sigma_vb[i])).log()+1)
-                policy_loss_vb = policy_loss_vb - (_log_prob * Variable(gae_ts).expand_as(_log_prob)).sum() - 0.0001 * _entropy.sum()
+                policy_loss_vb = policy_loss_vb - (_log_prob * Variable(gae_ts).expand_as(_log_prob)).sum() - 0.001 * _entropy.sum()
             else:
                 policy_loss_vb = policy_loss_vb - policy_log_vb[i] * Variable(gae_ts) - 0.01 * entropy_vb[i]
 

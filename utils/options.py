@@ -28,7 +28,8 @@ CONFIGS = [
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 10
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 11
 [ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-dis-mjc",      "none"      ],   # 12
-[ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con",      "none"      ]   # 13
+[ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con",      "none"      ],   # 13
+[ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-con",      "none"      ]   # 14
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -37,13 +38,13 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_test"  # "machine_id"
-        self.timestamp   = "17080901"   # "yymmdd##"
+        self.timestamp   = "17080903"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 9
+        self.config      = 12
 
         self.seed        = 123
-        self.render      = True         # whether render the window from the original envs or not
+        self.render      = False         # whether render the window from the original envs or not
         self.visualize   = True         # whether do online plotting and stuff or not
         self.save_best   = True        # save model w/ highest reward if True, otherwise always save the latest model
 
@@ -69,7 +70,7 @@ class Params(object):   # NOTE: shared across all modules
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 16
+            self.num_processes      = 1
 
             self.hist_len           = 1
             self.hidden_dim         = 128
@@ -140,8 +141,8 @@ class EnvParams(Params):    # settings for simulation environment
             self.preprocess_mode = 3  # 0(nothing) | 1(rgb2gray) | 2(rgb2y) | 3(crop&resize depth)
             self.img_encoding_type = "passthrough"
         elif self.env_type == "mujoco" :
-            self.hei_state = 42
-            self.wid_state = 42
+            self.hei_state = 64
+            self.wid_state = 64
             self.preprocess_mode = 0
         else:
             assert False, "env_type must be: gym | atari-ram | atari | lab | mujoco"
@@ -152,6 +153,7 @@ class ModelParams(Params):  # settings for network architecture
 
         self.state_shape = None # NOTE: set in fit_model of inherited Agents
         self.action_dim  = None # NOTE: set in fit_model of inherited Agents
+        self.dof = None # NOTE: set in fit_model of inherited Agents
 
 class MemoryParams(Params):     # settings for replay memory
     def __init__(self):

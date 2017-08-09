@@ -33,7 +33,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         if self.enable_continuous:
             self.actions = range(self.action_dim)
         else:
-            self.actions = self._setup_actions2()
+            self.actions = self._setup_actions()
         self.logger.warning("Action Space: %s", self.actions)
         # state space setup
         self.hei_state = args.hei_state
@@ -49,13 +49,14 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         else:
             return len(self.actions)
 
+    # discretize like in sim-to-real paper
     def _setup_actions(self):
         # discretize continuous action space
-        dof = self.env.action_space.shape[0]
+        self.dof = self.env.action_space.shape[0]
         discr_steps = 3
-        actions = range(discr_steps*dof)
+        actions = range(discr_steps)
         self.continuous_actions = np.array([0,self.env.action_space.low[0]*0.2,self.env.action_space.high[0]*0.2])
-
+        self.enable_mjc_dis = True
         print(self.continuous_actions)
         return actions
 
@@ -117,5 +118,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
             self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
         else:
             self.exp_action = self._discrete_to_continuous(action_index)
+            print(action_index)
+            print(self.exp_action)
             self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
         return self._get_experience()

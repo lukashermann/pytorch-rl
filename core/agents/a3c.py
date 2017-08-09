@@ -15,11 +15,14 @@ class A3CAgent(Agent):
         self.dummy_env   = self.env_prototype(self.env_params, self.num_processes)
         self.state_shape = self.dummy_env.state_shape
         self.action_dim  = self.dummy_env.action_dim
+        self.dof = self.dummy_env.dof
+        self.enable_mjc_dis = self.dummy_env.enable_mjc_dis
         del self.dummy_env
 
         # global shared model
         self.model_params.state_shape = self.state_shape
         self.model_params.action_dim  = self.action_dim
+        self.model_params.dof  = self.dof
         self.model = self.model_prototype(self.model_params)
         self._load_model(self.model_file)   # load pretrained model if provided
         self.model.share_memory()           # NOTE
