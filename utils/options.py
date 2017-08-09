@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 import numpy as np
 import os
 import visdom
@@ -9,24 +10,25 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 from utils.helpers import loggerConfig
-from utils.sharedAdam import SharedAdam
+from optims.sharedAdam import SharedAdam
+from optims.sharedRMSprop import SharedRMSprop
 
 CONFIGS = [
 # agent_type, env_type,    game,                       model_type, memory_type
-[ "empty",    "gym",       "CartPole-v0",              "mlp",      "none"      ],  # 0
-[ "dqn",      "gym",       "CartPole-v0",              "mlp",      "sequential"],  # 1
-[ "dqn",      "atari-ram", "Pong-ram-v0",              "mlp",      "sequential"],  # 2
-[ "dqn",      "atari",     "PongDeterministic-v4",     "cnn",      "sequential"],  # 3
-[ "dqn",      "atari",     "BreakoutDeterministic-v3", "cnn",      "sequential"],  # 4
-[ "a3c",      "atari",     "PongDeterministic-v4",     "a3c-cnn",  "none"      ],  # 5
-[ "a3c",      "gym",       "InvertedPendulum-v1",      "a3c-mjc",  "none"      ],  # 6
-[ "empty",    "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 7
-[ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",      "cnn",  "sequential"      ],  # 8
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn",      "none"      ],   # 9
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc",      "none"      ],   # 10
-[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",      "a3c-cnn-mjc2",      "none"      ],   # 11
-[ "a3c",      "mujoco",    "ReacherPixel-v1",                    "a3c-cnn",      "none"      ],   # 12
-[ "a3c",      "gym",       "Reacher-v1",                    "a3c-mjc",      "none"      ]   # 13
+[ "empty",    "gym",       "CartPole-v0",               "empty",      "none"      ],  # 0
+[ "dqn",      "gym",       "CartPole-v0",               "dqn-mlp",    "sequential"],  # 1
+[ "dqn",      "atari-ram", "Pong-ram-v0",               "dqn-mlp",      "sequential"],  # 2
+[ "dqn",      "atari",     "PongDeterministic-v4",      "dqn-cnn",      "sequential"],  # 3
+[ "dqn",      "atari",     "BreakoutDeterministic-v3",  "dqn-cnn",      "sequential"],  # 4
+[ "a3c",      "atari",     "PongDeterministic-v4",      "a3c-cnn-dis",       "none"      ],  # 5
+[ "a3c",      "gym",       "InvertedPendulum-v1",       "a3c-mlp-con",  "none"      ],  # 6
+[ "empty",    "mujoco",    "InvertedPendulumPixel-v1",  "empty",  "sequential"      ],  # 7
+[ "dqn",      "mujoco",    "InvertedPendulumPixel-v1",  "dqn-cnn",  "sequential"      ],  # 8
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-dis",      "none"      ],   # 9
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 10
+[ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 11
+[ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-dis-mjc",      "none"      ],   # 12
+[ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con",      "none"      ]   # 13
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -34,14 +36,14 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aiscpu1"  # "machine_id"
-        self.timestamp   = "17080802"   # "yymmdd##"
+        self.machine     = "lukas_test"  # "machine_id"
+        self.timestamp   = "17080901"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 13
+        self.config      = 9
 
         self.seed        = 123
-        self.render      = False         # whether render the window from the original envs or not
+        self.render      = True         # whether render the window from the original envs or not
         self.visualize   = True         # whether do online plotting and stuff or not
         self.save_best   = True        # save model w/ highest reward if True, otherwise always save the latest model
 
@@ -63,7 +65,7 @@ class Params(object):   # NOTE: shared across all modules
             self.dtype              = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
         elif self.agent_type == "a3c":
             self.enable_lstm        = True
-            if self.model_type == "a3c-mjc" or self.model_type == "a3c-cnn-mjc" or self.model_type == "a3c-cnn-mjc2":    # NOTE: should be set to True when training Mujoco envs
+            if "-con" in self.model_type:
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
@@ -71,6 +73,19 @@ class Params(object):   # NOTE: shared across all modules
 
             self.hist_len           = 1
             self.hidden_dim         = 128
+
+            self.use_cuda           = False
+            self.dtype              = torch.FloatTensor
+        elif self.agent_type == "acer":
+            self.enable_lstm        = True
+            if "-con" in self.model_type:
+                self.enable_continuous  = True
+            else:
+                self.enable_continuous  = False
+            self.num_processes      = 16
+
+            self.hist_len           = 1
+            self.hidden_dim         = 32
 
             self.use_cuda           = False
             self.dtype              = torch.FloatTensor
@@ -124,11 +139,7 @@ class EnvParams(Params):    # settings for simulation environment
             self.wid_state = 80
             self.preprocess_mode = 3  # 0(nothing) | 1(rgb2gray) | 2(rgb2y) | 3(crop&resize depth)
             self.img_encoding_type = "passthrough"
-        elif self.env_type == "mujoco" and  self.model_type == "a3c-cnn-mjc2":
-            self.hei_state = 84
-            self.wid_state = 84
-            self.preprocess_mode = 0
-        elif self.env_type == "mujoco" and  self.model_type != "a3c-cnn-mjc2":
+        elif self.env_type == "mujoco" :
             self.hei_state = 42
             self.wid_state = 42
             self.preprocess_mode = 0
@@ -218,8 +229,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.action_repetition   = 4
             self.memory_interval     = 1
             self.train_interval      = 4
-        elif self.agent_type == "a3c" and self.env_type == "atari-ram" or \
-             self.agent_type == "a3c" and (self.env_type == "atari" or self.env_type == "gym"):
+        elif self.agent_type == "a3c":
             self.steps               = 20000000 # max #iterations
             self.early_stop          = None     # max #steps per episode
             self.gamma               = 0.99
@@ -233,7 +243,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
 
             self.rollout_steps       = 20       # max look-ahead steps in a single rollout
             self.tau                 = 1.
-        elif self.agent_type == "a3c" and self.env_type == "mujoco":
+        elif self.agent_type == "acer":
             self.steps               = 20000000 # max #iterations
             self.early_stop          = None     # max #steps per episode
             self.gamma               = 0.99
@@ -253,8 +263,8 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 1.#np.inf
             self.lr                  = 0.001
-            self.eval_freq           = 250     # NOTE: here means every this many steps
-            self.eval_steps          = 100
+            self.eval_freq           = 2500     # NOTE: here means every this many steps
+            self.eval_steps          = 1000
             self.prog_freq           = self.eval_freq
             self.test_nepisodes      = 10
 

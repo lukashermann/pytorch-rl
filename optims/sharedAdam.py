@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from __future__ import division
-
+from __future__ import print_function
 import math
 import torch
 import torch.optim as optim
@@ -12,6 +12,8 @@ class SharedAdam(optim.Adam):
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
                  weight_decay=0):
         super(SharedAdam, self).__init__(params, lr, betas, eps, weight_decay)
+
+        # State initialisation (must be done before step, else will not be shared between threads)
         for group in self.param_groups:
             for p in group['params']:
                 state = self.state[p]

@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 import numpy as np
 import torch
 import torch.nn as nn
@@ -43,7 +44,7 @@ class Model(nn.Module):
 
     def forward(self, input):
         raise NotImplementedError("not implemented in base calss")
-
+"""
 class MlpModel(Model):
     def __init__(self, args):
         super(MlpModel, self).__init__(args)
@@ -418,26 +419,7 @@ class A3CCnnMjcModel(Model):
         super(A3CCnnMjcModel, self).__init__(args)
         # build model
         # 0. feature layers
-        """
-        self.fc1 = nn.Linear(self.input_dims[0] * self.input_dims[1], self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl1 = nn.ReLU()
-        self.fc2 = nn.Linear(self.hidden_dim, self.hidden_dim)
-        self.rl2 = nn.ReLU()
-        self.fc3 = nn.Linear(self.hidden_dim, self.hidden_dim)
-        self.rl3 = nn.ReLU()
-        self.fc4 = nn.Linear(self.hidden_dim, self.hidden_dim)
-        self.rl4 = nn.ReLU()
 
-
-        self.fc1_v = nn.Linear(self.input_dims[0] * self.input_dims[1], self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl1_v = nn.ReLU()
-        self.fc2_v = nn.Linear(self.hidden_dim, self.hidden_dim)
-        self.rl2_v = nn.ReLU()
-        self.fc3_v = nn.Linear(self.hidden_dim, self.hidden_dim)
-        self.rl3_v = nn.ReLU()
-        self.fc4_v = nn.Linear(self.hidden_dim, self.hidden_dim)
-        self.rl4_v = nn.ReLU()
-        """
 
         self.conv1 = nn.Conv2d(self.input_dims[0], 32, kernel_size=3, stride=2) # NOTE: for pkg="atari"
         self.rl1   = nn.ReLU()
@@ -477,14 +459,7 @@ class A3CCnnMjcModel(Model):
         self.lstm_v.bias_hh.data.fill_(0)
 
     def forward(self, x, lstm_hidden_vb=None):
-        """
-        p = x.view(x.size(0), self.input_dims[0] * self.input_dims[1])
-        p = self.rl1(self.fc1(p))
-        p = self.rl2(self.fc2(p))
-        p = self.rl3(self.fc3(p))
-        p = self.rl4(self.fc4(p))
-        p = p.view(-1, self.hidden_dim)
-        """
+
         x = x.view(x.size(0), self.input_dims[0], self.input_dims[1], self.input_dims[1])
 
         x = self.rl1(self.conv1(x))
@@ -501,14 +476,6 @@ class A3CCnnMjcModel(Model):
         sig = self.policy_sig(p)
         sig = self.softplus(sig)
 
-        """
-        v = x.view(x.size(0), self.input_dims[0] * self.input_dims[1])
-        v = self.rl1_v(self.fc1_v(v))
-        v = self.rl2_v(self.fc2_v(v))
-        v = self.rl3_v(self.fc3_v(v))
-        v = self.rl4_v(self.fc4_v(v))
-        v = v.view(-1, self.hidden_dim)
-        """
         v = x.view(-1, 3*3*32)
         if self.enable_lstm:
             v, c_v = self.lstm_v(v, (v_, c_v))
@@ -532,17 +499,7 @@ class A3CCnnMjcModel2(Model):
         self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=1)
         self.rl3   = nn.ReLU()
 
-        """
-        # 42x42
-        self.conv1 = nn.Conv2d(self.input_dims[0], 32, kernel_size=3, stride=2) # NOTE: for pkg="atari"
-        self.rl1   = nn.ReLU()
-        self.conv2 = nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1)
-        self.rl2   = nn.ReLU()
-        self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1)
-        self.rl3   = nn.ReLU()
-        self.conv4 = nn.Conv2d(32, 32, kernel_size=3, stride=2, padding=1)
-        self.rl4   = nn.ReLU()
-        """
+
         # lstm
         if self.enable_lstm:
             self.lstm  = nn.LSTMCell(7*7*32, self.hidden_dim, 1)
@@ -596,3 +553,4 @@ class A3CCnnMjcModel2(Model):
             return p_out, sig, v_out, (torch.cat((p,v),0), torch.cat((c_p, c_v),0))
         else:
             return p_out, sig, v_out
+"""

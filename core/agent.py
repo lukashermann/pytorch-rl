@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 import torch
 import torch.optim as optim
 
@@ -71,6 +72,13 @@ class Agent(object):
             self.memory_interval = args.memory_interval
             self.train_interval = args.train_interval
         elif args.agent_type == "a3c":
+            self.enable_lstm = args.enable_lstm
+            self.enable_continuous = args.enable_continuous
+            self.num_processes = args.num_processes
+
+            self.rollout_steps = args.rollout_steps
+            self.tau = args.tau
+        elif args.agent_type == "acer":
             self.enable_lstm = args.enable_lstm
             self.enable_continuous = args.enable_continuous
             self.num_processes = args.num_processes

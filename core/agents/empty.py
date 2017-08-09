@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
 import random
 
 from utils.helpers import Experience
@@ -41,7 +42,6 @@ class EmptyAgent(Agent):
             self.experience = self.env.step(action)
             if self.visualize: self.env.visual()
             if self.render: self.env.render()
-            
             if self.experience.terminal1 or self.early_stop and (episode_steps + 1) >= self.early_stop:
                 should_start_new = True
 

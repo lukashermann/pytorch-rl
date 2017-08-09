@@ -4,12 +4,12 @@ from __future__ import print_function
 import torch.multiprocessing as mp
 
 from core.agent import Agent
-from core.agents.a3cSingleProcess import A3CLearner, A3CEvaluator, A3CTester
+from core.agents.acerSingleProcess import ACERLearner, ACEREvaluator, ACERTester
 
-class A3CAgent(Agent):
+class ACERAgent(Agent):
     def __init__(self, args, env_prototype, model_prototype, memory_prototype):
-        super(A3CAgent, self).__init__(args, env_prototype, model_prototype, memory_prototype)
-        self.logger.warning("<===================================> A3C-Master {Env(dummy) & Model}")
+        super(ACERAgent, self).__init__(args, env_prototype, model_prototype, memory_prototype)
+        self.logger.warning("<===================================> ACER-Master {Env(dummy) & Model}")
 
         # dummy_env just to get state_shape & action_dim
         self.dummy_env   = self.env_prototype(self.env_params, self.num_processes)
@@ -25,7 +25,7 @@ class A3CAgent(Agent):
         self.model.share_memory()           # NOTE
 
         # learning algorithm # TODO: could also linearly anneal learning rate
-        self.optimizer = self.optim(self.model.parameters(), lr = self.lr, weight_decay = self.weight_decay)
+        self.optimizer = self.optim(self.model.parameters(), lr = self.lr)
         self.optimizer.share_memory()       # NOTE
 
         # global counters
@@ -47,8 +47,8 @@ class A3CAgent(Agent):
     def fit_model(self):
         self.jobs = []
         for process_id in range(self.num_processes):
-            self.jobs.append(A3CLearner(self, process_id))
-        self.jobs.append(A3CEvaluator(self, self.num_processes))
+            self.jobs.append(ACERLearner(self, process_id))
+        self.jobs.append(ACEREvaluator(self, self.num_processes))
 
         self.logger.warning("<===================================> Training ...")
         for job in self.jobs:
@@ -58,7 +58,7 @@ class A3CAgent(Agent):
 
     def test_model(self):
         self.jobs = []
-        self.jobs.append(A3CTester(self))
+        self.jobs.append(ACERTester(self))
 
         self.logger.warning("<===================================> Testing ...")
         for job in self.jobs:
