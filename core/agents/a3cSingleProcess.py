@@ -91,7 +91,7 @@ class A3CSingleProcess(th.Thread):
                 action = p_vb.max(1)[1].data.squeeze().numpy()[0]
             return action, p_vb, v_vb
 
-
+        # mujoco discretization
         elif not self.master.enable_continuous and self.master.enable_mjc_dis:
             p_vb_list, v_vb, self.lstm_hidden_vb = self.model(state_vb, self.lstm_hidden_vb)
             if self.training:
@@ -210,7 +210,7 @@ class A3CLearner(A3CSingleProcess):
             if self.master.use_cuda:
                 action_batch_vb = action_batch_vb.cuda()
             policy_log_vb = [torch.log(policy_vb[i]) for i in range(rollout_steps)]
-            entropy_vb    = [- (policy_log_vb[i] * policy_vb[i]).sum(1).mean(0) for i in range(rollout_steps)]
+            entropy_vb    = [- (policy_log_vb[i] * policy_vb[i]).sum(1) for i in range(rollout_steps)]
             policy_log_vb = [policy_log_vb[i].gather(1, action_batch_vb[i].unsqueeze(0)) for i in range(rollout_steps) ]
         # mujoco dicretization
         else:

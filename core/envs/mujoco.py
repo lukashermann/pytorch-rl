@@ -55,7 +55,7 @@ class MujocoEnv(Env):  # pixel-level inputs, Discrete
         self.dof = self.env.action_space.shape[0]
         discr_steps = 3
         actions = range(discr_steps)
-        self.continuous_actions = np.array([0,self.env.action_space.low[0]*0.3,self.env.action_space.high[0]*0.3])
+        self.continuous_actions = np.array([0,self.env.action_space.low[0]*0.1,self.env.action_space.high[0]*0.1])
         self.enable_mjc_dis = True
         print(self.continuous_actions)
         return actions

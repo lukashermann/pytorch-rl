@@ -19,7 +19,9 @@ class A3CCnnDisMjcModel(Model):
         self.dof = args.dof
         self.action_dim = args.action_dim
         self.output_dims = self.action_dim * self.dof
-        self.conv1 = nn.Conv2d(self.input_dims[0], 16, kernel_size=8, stride=4) # NOTE: for pkg="atari"
+        self.input_channels = args.input_channels
+
+        self.conv1 = nn.Conv2d(self.input_channels, 16, kernel_size=8, stride=4) # NOTE: for pkg="atari"
         self.rl1   = nn.ReLU()
         self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2)
         self.rl2   = nn.ReLU()
@@ -47,7 +49,7 @@ class A3CCnnDisMjcModel(Model):
 
     def forward(self, x, lstm_hidden_vb=None):
         assert self.input_dims[1] == 64
-        x = x.view(x.size(0), self.input_dims[0], self.input_dims[1], self.input_dims[1])
+        x = x.view(x.size(0), self.input_channels, self.input_dims[1], self.input_dims[1])
         x = self.rl1(self.conv1(x))
         x = self.rl2(self.conv2(x))
         x = x.view(-1, 6*6*32)

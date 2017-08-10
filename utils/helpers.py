@@ -47,10 +47,11 @@ def preprocessRgb(img,height, width):
     # convert to grayscale
     img = cv2.resize(img, (height*2, width*2))
     img = cv2.resize(img, (height,width))
-    img = img.mean(2)
+    #img = img.mean(2)
     img = img.astype(np.float32)
     img*= (1. / 255.)
     return img
+
 def preprocessDepth(img, height, width):
     img /= img.max()
     img = cv2.resize(img, (height, width), interpolation = cv2.INTER_NEAREST)
