@@ -237,7 +237,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.gamma               = 0.99
             self.clip_grad           = 40.
             self.lr                  = 0.0001
-            self.weight_decay        = 1e-4
+            self.weight_decay        = 0
             self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
