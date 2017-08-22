@@ -50,12 +50,13 @@ class A3CMlpConModel(Model):
         self.policy_5.bias.data.fill_(0)
         self.value_5.weight.data = normalized_columns_initializer(self.value_5.weight.data, 1.0)
         self.value_5.bias.data.fill_(0)
+        # lstm
+        if self.enable_lstm:
+            self.lstm.bias_ih.data.fill_(0)
+            self.lstm.bias_hh.data.fill_(0)
 
-        self.lstm.bias_ih.data.fill_(0)
-        self.lstm.bias_hh.data.fill_(0)
-
-        self.lstm_v.bias_ih.data.fill_(0)
-        self.lstm_v.bias_hh.data.fill_(0)
+            self.lstm_v.bias_ih.data.fill_(0)
+            self.lstm_v.bias_hh.data.fill_(0)
 
     def forward(self, x, lstm_hidden_vb=None):
         p = x.view(x.size(0), self.input_dims[0] * self.input_dims[1])
