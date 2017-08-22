@@ -37,8 +37,8 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aisgpu5"  # "machine_id"
-        self.timestamp   = "17082201"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu3"  # "machine_id"
+        self.timestamp   = "17082207"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 13
@@ -282,7 +282,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.memory_interval     = 1
             self.train_interval      = 4
 
-            self.rollout_steps       = 20       # max look-ahead steps in a single rollout
+            self.rollout_steps       = 50       # max look-ahead steps in a single rollout
             self.tau                 = 1.
 
         self.env_params    = EnvParams()
