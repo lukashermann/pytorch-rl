@@ -232,7 +232,7 @@ class A3CLearner(A3CSingleProcess):
         for i in reversed(range(rollout_steps)):
             valueT_vb     = self.master.gamma * valueT_vb + self.rollout.reward[i]
             advantage_vb  = valueT_vb - self.rollout.value0_vb[i]
-            value_loss_vb = value_loss_vb + 0.5 * advantage_vb.pow(2)
+            value_loss_vb = value_loss_vb + advantage_vb.pow(2)
 
             # Generalized Advantage Estimation
             tderr_ts = self.rollout.reward[i] + self.master.gamma * self.rollout.value0_vb[i + 1].data - self.rollout.value0_vb[i].data
