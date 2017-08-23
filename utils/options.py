@@ -37,8 +37,8 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aisgpu5"  # "machine_id"
-        self.timestamp   = "17082201"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu2"  # "machine_id"
+        self.timestamp   = "17082301"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 13
@@ -236,7 +236,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.early_stop          = None     # max #steps per episode
             self.gamma               = 0.99
             self.clip_grad           = 40.
-            self.lr                  = 0.0001
+            self.lr                  = 0.0005
             self.weight_decay        = 1e-4
             self.eval_freq           = 60       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
