@@ -37,15 +37,15 @@ class Params(object):   # NOTE: shared across all modules
         self.verbose     = 0            # 0(warning) | 1(info) | 2(debug)
 
         # training signature
-        self.machine     = "lukas_aiscpu5"  # "machine_id"
-        self.timestamp   = "17082304"   # "yymmdd##"
+        self.machine     = "lukas_aiscpu3"  # "machine_id"
+        self.timestamp   = "17082501"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 13
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
-        self.visualize   = True         # whether do online plotting and stuff or not
+        self.visualize   = False         # whether do online plotting and stuff or not
         self.save_best   = True        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
@@ -70,7 +70,7 @@ class Params(object):   # NOTE: shared across all modules
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 16
+            self.num_processes      = 1
 
             self.hist_len           = 1
             self.hidden_dim         = 128
