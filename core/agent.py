@@ -50,6 +50,7 @@ class Agent(object):
         self.gamma = args.gamma
         self.clip_grad = args.clip_grad
         self.lr = args.lr
+        self.lr_decay = args.lr_decay
         self.weight_decay = args.weight_decay
         self.eval_freq = args.eval_freq
         self.eval_steps = args.eval_steps
@@ -72,19 +73,35 @@ class Agent(object):
             self.memory_interval = args.memory_interval
             self.train_interval = args.train_interval
         elif args.agent_type == "a3c":
+            self.enable_log_at_train_step = args.enable_log_at_train_step
+
             self.enable_lstm = args.enable_lstm
             self.enable_continuous = args.enable_continuous
             self.num_processes = args.num_processes
 
             self.rollout_steps = args.rollout_steps
             self.tau = args.tau
+            self.beta = args.beta
         elif args.agent_type == "acer":
+            self.enable_bias_correction = args.enable_bias_correction
+            self.enable_1st_order_trpo = args.enable_1st_order_trpo
+            self.enable_log_at_train_step = args.enable_log_at_train_step
+
             self.enable_lstm = args.enable_lstm
             self.enable_continuous = args.enable_continuous
             self.num_processes = args.num_processes
 
+            self.replay_ratio = args.replay_ratio
+            self.replay_start = args.replay_start
+            self.batch_size = args.batch_size
+            self.valid_size = args.valid_size
+            self.clip_trace = args.clip_trace
+            self.clip_1st_order_trpo = args.clip_1st_order_trpo
+            self.avg_model_decay = args.avg_model_decay
+
             self.rollout_steps = args.rollout_steps
             self.tau = args.tau
+            self.beta = args.beta
 
     def _reset_experience(self):
         self.experience = Experience(state0 = None,

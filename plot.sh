@@ -2,37 +2,22 @@
 set -e
 
 if [ $# -lt 1 ]; then
-    echo "usage: $0 compare_ind machine_1 time_stamp_1 .. .. machine_N time_stamp_N"
+    echo "usage: $0 machine time_stamp"
     exit
 fi
 
-LOG_FIL_ALL=""
 LOG_DIR="logs/"
-j=0
-for i in $@
-do
-    if [ $j -eq 0 ]; then
-        SUB_DIR="figs/compare_"$i"/"
-        let j=$j+1
-        continue
-    fi
-    let j=$j+1
-    if [ $(($j % 2)) = 0 ]; then    # machine
-        MACHINE=$i
-    else                            # time_stamp
-        TIME_STAMP=$i
-        LOG_FIL=$LOG_DIR$MACHINE"_"$TIME_STAMP".log"
-        echo "$LOG_FIL"
-        LOG_FIL_ALL="$LOG_FIL_ALL $LOG_FIL"
-    fi
-done
+LOG_FIL=$LOG_DIR$1"_"$2".log"
+echo "$LOG_FIL"
+# sed -i 's/,/./g' $LOG_FIL
 
+SUB_DIR="figs/"$1"_"$2"/"
 if [ -d "$SUB_DIR" ]; then
     rm -r $SUB_DIR
 fi
 mkdir $SUB_DIR
 
-OPT="lmj-plot --input $LOG_FIL_ALL \
+OPT="lmj-plot --input $LOG_FIL \
               --num-x-ticks 8 \
               --alpha 0.7 \
               --colors r g b m y c \
