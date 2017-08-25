@@ -116,7 +116,6 @@ class A3CSingleProcess(th.Thread):
                 action = (p_vb + sig_vb.sqrt()*Variable(_eps)).data.numpy()
             else:
                 action = p_vb.data.numpy()
-
             return action, p_vb, sig_vb, v_vb
 
     def _normal(self, x, mu, sigma_sq):
@@ -291,7 +290,7 @@ class A3CLearner(A3CSingleProcess):
             episode_reward += self.experience.reward
             self.frame_step += 1
             self.master.frame_step.value += 1
-            print("frame_steps", self.master.frame_step.value)
+            #print("frame_steps", self.master.frame_step.value)
             # NOTE: we put this condition inside to make sure this current rollout won't be empty
             if self.master.train_step.value >= self.master.steps:
                 break
@@ -343,8 +342,8 @@ class A3CLearner(A3CSingleProcess):
 
             # calculate loss
             self._backward()
-            print("train_step ", self.master.train_step.value)
-            print("frame_step", self.master.frame_step.value)
+            #print("train_step ", self.master.train_step.value)
+            #print("frame_step", self.master.frame_step.value)
             # copy local training stats to global at prog_freq, and clear up local stats
             if time.time() - self.last_prog >= self.master.prog_freq:
                 self.master.p_loss_avg.value   += self.p_loss_avg

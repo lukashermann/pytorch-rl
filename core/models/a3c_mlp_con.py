@@ -37,7 +37,8 @@ class A3CMlpConModel(Model):
         self._reset()
 
     def _init_weights(self):
-        self.apply(init_weights)
+        pass
+        """self.apply(init_weights)
         self.fc1.weight.data = normalized_columns_initializer(self.fc1.weight.data, 0.01)
         self.fc1.bias.data.fill_(0)
         self.fc1_v.weight.data = normalized_columns_initializer(self.fc1_v.weight.data, 0.01)
@@ -51,7 +52,7 @@ class A3CMlpConModel(Model):
         self.lstm.bias_hh.data.fill_(0)
 
         self.lstm_v.bias_ih.data.fill_(0)
-        self.lstm_v.bias_hh.data.fill_(0)
+        self.lstm_v.bias_hh.data.fill_(0)"""
 
     def forward(self, x, lstm_hidden_vb=None):
         p = x.view(x.size(0), self.input_dims[0] * self.input_dims[1])
