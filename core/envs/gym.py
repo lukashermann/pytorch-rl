@@ -70,4 +70,6 @@ class GymEnv(Env):  # low dimensional observations
             self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
         else:
             self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.actions[self.exp_action])
+        self.exp_reward = max(min(self.exp_reward, 1), -1)
+
         return self._get_experience()
