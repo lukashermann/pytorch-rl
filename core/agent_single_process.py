@@ -10,10 +10,10 @@ import torch.optim as optim
 from torch.autograd import Variable
 import torch.nn.functional as F
 import torch.multiprocessing as mp
-
+import threading as th
 from utils.helpers import Experience, one_hot
 
-class AgentSingleProcess(mp.Process):
+class AgentSingleProcess(th.Thread):
     def __init__(self, master, process_id=0):
         super(AgentSingleProcess, self).__init__(name = "Process-%d" % process_id)
         # NOTE: self.master.* refers to parameters shared across all processes
