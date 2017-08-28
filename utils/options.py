@@ -67,12 +67,12 @@ class Params(object):   # NOTE: shared across all modules
         elif self.agent_type == "a3c":
             self.enable_log_at_train_step = True # when False, x-axis would be frame_step instead of train_step
 
-            self.enable_lstm        = True
+            self.enable_lstm        = False
             if "-con" in self.model_type:
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 1
+            self.num_processes      = 16
 
             self.hist_len           = 1
             self.hidden_dim         = 128

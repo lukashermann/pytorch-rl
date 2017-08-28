@@ -18,7 +18,7 @@ class A3CMlpConModel2(Model):
         self.fc1 = nn.Linear(self.input_dims[0] * self.input_dims[1], 200) # NOTE: for pkg="gym"
         self.rl1 = nn.ReLU()
 
-        self.fc1_v = nn.Linear(self.input_dims[0] * self.input_dims[1], 200) # NOTE: for pkg="gym"
+        self.fc1_v = nn.Linear(self.input_dims[0] * self.input_dims[1], 100) # NOTE: for pkg="gym"
         self.rl1_v = nn.ReLU()
 
 
@@ -28,11 +28,11 @@ class A3CMlpConModel2(Model):
             self.lstm_v  = nn.LSTMCell(200, self.hidden_dim, 1)
 
         # 1. policy output
-        self.policy_5   = nn.Linear(self.hidden_dim, self.output_dims)
-        self.policy_sig = nn.Linear(self.hidden_dim, self.output_dims)
+        self.policy_5   = nn.Linear(200, self.output_dims)
+        self.policy_sig = nn.Linear(200, self.output_dims)
         self.softplus   = nn.Softplus()
         # 2. value output
-        self.value_5    = nn.Linear(self.hidden_dim, 1)
+        self.value_5    = nn.Linear(100, 1)
 
         self._reset()
 
@@ -68,7 +68,7 @@ class A3CMlpConModel2(Model):
 
         v = x.view(x.size(0), self.input_dims[0] * self.input_dims[1])
         v = self.rl1_v(self.fc1_v(v))
-        v = v.view(-1, 200)
+        v = v.view(-1, 100)
         if self.enable_lstm:
             v, c_v = self.lstm_v(v, (v_, c_v))
         v_out = self.value_5(v)
