@@ -263,7 +263,8 @@ class A3CLearner(A3CSingleProcess):
             episode_reward += self.experience.reward
             self.frame_step += 1
             self.master.frame_step.value += 1
-
+            if self.master.frame_step.value % 1000 == 0:
+                print(self.master.frame_step.value)
             # NOTE: we put this condition in the end to make sure this current rollout won't be empty
             if self.master.train_step.value >= self.master.steps:
                 break
