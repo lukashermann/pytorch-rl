@@ -29,7 +29,7 @@ CONFIGS = [
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 11
 [ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-dis-mjc",      "none"      ],   # 12
 [ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con",      "none"      ],   # 13
-[ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-con64",      "none"      ]   # 14
+[ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con2",      "none"      ]   # 14
 ]
 
 class Params(object):   # NOTE: shared across all modules
