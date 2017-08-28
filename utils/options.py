@@ -45,7 +45,7 @@ class Params(object):   # NOTE: shared across all modules
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
-        self.visualize   = True         # whether do online plotting and stuff or not
+        self.visualize   = False         # whether do online plotting and stuff or not
         self.save_best   = True        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
@@ -65,12 +65,12 @@ class Params(object):   # NOTE: shared across all modules
             self.use_cuda           = torch.cuda.is_available()
             self.dtype              = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
         elif self.agent_type == "a3c":
-            self.enable_lstm        = True
+            self.enable_lstm        = False
             if "-con" in self.model_type:
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 1
+            self.num_processes      = 16
 
             self.hist_len           = 1
             self.hidden_dim         = 128
