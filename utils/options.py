@@ -70,7 +70,7 @@ class Params(object):   # NOTE: shared across all modules
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 16
+            self.num_processes      = 1
 
             self.hist_len           = 1
             self.hidden_dim         = 128
