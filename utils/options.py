@@ -41,7 +41,7 @@ class Params(object):   # NOTE: shared across all modules
         self.timestamp   = "17082801"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
-        self.config      = 13
+        self.config      = 14
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
