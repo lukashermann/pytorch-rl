@@ -29,7 +29,7 @@ CONFIGS = [
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 11
 [ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-dis-mjc",      "none"      ],   # 12
 [ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con",      "none"      ],   # 13
-[ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con2",      "none"      ]   # 14
+[ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con3",      "none"      ]   # 14
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -38,7 +38,7 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu3"  # "machine_id"
-        self.timestamp   = "17082801"   # "yymmdd##"
+        self.timestamp   = "17083102"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 14
@@ -46,7 +46,7 @@ class Params(object):   # NOTE: shared across all modules
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
         self.visualize   = False         # whether do online plotting and stuff or not
-        self.save_best   = True        # save model w/ highest reward if True, otherwise always save the latest model
+        self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
 
@@ -67,15 +67,15 @@ class Params(object):   # NOTE: shared across all modules
         elif self.agent_type == "a3c":
             self.enable_log_at_train_step = True # when False, x-axis would be frame_step instead of train_step
 
-            self.enable_lstm        = True
+            self.enable_lstm        = False
             if "-con" in self.model_type:
                 self.enable_continuous  = True
             else:
                 self.enable_continuous  = False
-            self.num_processes      = 1
+            self.num_processes      = 16
 
             self.hist_len           = 1
-            self.hidden_dim         = 128
+            self.hidden_dim         = 64
 
             self.use_cuda           = False
             self.dtype              = torch.FloatTensor
@@ -248,12 +248,12 @@ class AgentParams(Params):  # hyperparameters for drl agents
             self.lr                  = 0.0001
             self.lr_decay            = False
             self.weight_decay        = 1e-4 if self.enable_continuous else 0.
-            self.eval_freq           = 60       # NOTE: here means every this many seconds
+            self.eval_freq           = 10       # NOTE: here means every this many seconds
             self.eval_steps          = 3000
             self.prog_freq           = self.eval_freq
             self.test_nepisodes      = 10
 
-            self.rollout_steps       = 20       # max look-ahead steps in a single rollout
+            self.rollout_steps       = 50       # max look-ahead steps in a single rollout
             self.tau                 = 1.
             self.beta                = 0.01     # coefficient for entropy penalty
         elif self.agent_type == "acer":

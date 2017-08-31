@@ -13,7 +13,7 @@ import torch.multiprocessing as mp
 import threading as th
 from utils.helpers import Experience, one_hot
 
-class AgentSingleProcess(th.Thread):
+class AgentSingleProcess(mp.Process):
     def __init__(self, master, process_id=0):
         super(AgentSingleProcess, self).__init__(name = "Process-%d" % process_id)
         # NOTE: self.master.* refers to parameters shared across all processes
