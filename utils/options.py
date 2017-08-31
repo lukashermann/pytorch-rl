@@ -45,7 +45,7 @@ class Params(object):   # NOTE: shared across all modules
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
-        self.visualize   = False         # whether do online plotting and stuff or not
+        self.visualize   = True         # whether do online plotting and stuff or not
         self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
@@ -130,7 +130,7 @@ class Params(object):   # NOTE: shared across all modules
 class EnvParams(Params):    # settings for simulation environment
     def __init__(self):
         super(EnvParams, self).__init__()
-
+        self.ob_filter = None
         if self.env_type == "gym":
             pass
         elif self.env_type == "atari-ram":

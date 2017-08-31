@@ -5,6 +5,7 @@ import torch.multiprocessing as mp
 
 from core.agent import Agent
 from core.agents.a3c_single_process import A3CLearner, A3CEvaluator, A3CTester
+from utils.filters import ZFilter
 
 class A3CAgent(Agent):
     def __init__(self, args, env_prototype, model_prototype, memory_prototype):
@@ -18,7 +19,8 @@ class A3CAgent(Agent):
         self.dof = self.dummy_env.dof
         self.enable_mjc_dis = self.dummy_env.enable_mjc_dis
         del self.dummy_env
-
+        # observation Filter
+        self.env_params.ob_filter = ZFilter(self.state_shape)
         # global shared model
         self.model_params.state_shape = self.state_shape
         self.model_params.action_dim  = self.action_dim

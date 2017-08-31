@@ -34,6 +34,9 @@ class GymEnv(Env):  # low dimensional observations
         else:
             self.enable_continuous = False
 
+        # observation Filter
+        self.ob_filter = args.ob_filter
+
     def _preprocessState(self, state):    # NOTE: here no preprecessing is needed
         return state
 
@@ -70,4 +73,6 @@ class GymEnv(Env):  # low dimensional observations
             self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.exp_action)
         else:
             self.exp_state1, self.exp_reward, self.exp_terminal1, _ = self.env.step(self.actions[self.exp_action])
+        if self.ob_filter:
+            self.exp_state1 = self.ob_filter(self.exp_state1)
         return self._get_experience()

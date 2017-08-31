@@ -13,7 +13,6 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 from utils.helpers import A3C_Experience
-from utils.filters import ZFilter
 from core.agent_single_process import AgentSingleProcess
 
 class A3CSingleProcess(AgentSingleProcess):
@@ -30,10 +29,6 @@ class A3CSingleProcess(AgentSingleProcess):
             self.pi_vb = Variable(torch.Tensor([math.pi]).type(self.master.dtype))
 
         self.master.logger.warning("Registered A3C-SingleProcess-Agent #" + str(self.process_id) + " w/ Env (seed:" + str(self.env.seed) + ").")
-
-        # observation Filter
-        self.ob_filter = ZFilter(self.env.state_shape)
-
 
         # NOTE: to be called at the beginning of each new episode, clear up the hidden state
     def _reset_lstm_hidden_vb_episode(self, training=True): # seq_len, batch_size, hidden_dim
@@ -256,10 +251,6 @@ class A3CLearner(A3CSingleProcess):
                 action, p_vb, v_vb = self._forward(self._preprocessState(self.experience.state1))
             # then execute action in env to get a new experience.state1 -> rollout.state1
             self.experience = self.env.step(action)
-            """print(self.experience.state1)
-            self.experience.state1 = self.ob_filter(self.experience.state1)
-            print(self.experience.state1)
-            assert 1==2"""
             # push experience into rollout
             self.rollout.action.append(action)
             self.rollout.reward.append(self.experience.reward)
