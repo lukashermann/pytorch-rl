@@ -16,13 +16,13 @@ class A3CMlpConModel3(Model):
         # build model
         # 0. feature layers
         self.fc1 = nn.Linear(self.input_dims[0] * self.input_dims[1], self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl1 = nn.Tanh()
+        self.rl1 = nn.ReLU()
         self.fc2 = nn.Linear(self.hidden_dim, self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl2 = nn.Tanh()
+        self.rl2 = nn.ReLU()
         self.fc1_v = nn.Linear(self.input_dims[0] * self.input_dims[1], self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl1_v = nn.ELU()
+        self.rl1_v = nn.ReLU()
         self.fc2_v = nn.Linear(self.hidden_dim, self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl2_v = nn.ELU()
+        self.rl2_v = nn.ReLU()
 
         # lstm
         if self.enable_lstm:
