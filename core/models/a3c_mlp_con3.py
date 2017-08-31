@@ -16,13 +16,13 @@ class A3CMlpConModel3(Model):
         # build model
         # 0. feature layers
         self.fc1 = nn.Linear(self.input_dims[0] * self.input_dims[1], self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl1 = nn.ReLU()
+        self.rl1 = nn.Tanh()
         self.fc2 = nn.Linear(self.hidden_dim, self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl2 = nn.ReLU()
+        self.rl2 = nn.Tanh()
         self.fc1_v = nn.Linear(self.input_dims[0] * self.input_dims[1], self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl1_v = nn.ReLU()
+        self.rl1_v = nn.ELU()
         self.fc2_v = nn.Linear(self.hidden_dim, self.hidden_dim) # NOTE: for pkg="gym"
-        self.rl2_v = nn.ReLU()
+        self.rl2_v = nn.ELU()
 
         # lstm
         if self.enable_lstm:
@@ -40,13 +40,13 @@ class A3CMlpConModel3(Model):
 
     def _init_weights(self):
         self.apply(init_weights)
-        self.fc1.weight.data = normalized_columns_initializer(self.fc1.weight.data, 1.0)
+        self.fc1.weight.data = normalized_columns_initializer(self.fc1.weight.data, 0.01)
         self.fc1.bias.data.fill_(0)
-        self.fc1_v.weight.data = normalized_columns_initializer(self.fc1_v.weight.data, 1.0)
+        self.fc1_v.weight.data = normalized_columns_initializer(self.fc1_v.weight.data, 0.01)
         self.fc1_v.bias.data.fill_(0)
-        self.fc2.weight.data = normalized_columns_initializer(self.fc2.weight.data, 1.0)
+        self.fc2.weight.data = normalized_columns_initializer(self.fc2.weight.data, 0.01)
         self.fc2.bias.data.fill_(0)
-        self.fc2_v.weight.data = normalized_columns_initializer(self.fc2_v.weight.data, 1.0)
+        self.fc2_v.weight.data = normalized_columns_initializer(self.fc2_v.weight.data, 0.01)
         self.fc2_v.bias.data.fill_(0)
         self.policy_5.weight.data = normalized_columns_initializer(self.policy_5.weight.data, 0.01)
         self.policy_5.bias.data.fill_(0)
