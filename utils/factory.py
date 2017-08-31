@@ -46,7 +46,7 @@ MemoryDict = {"sequential":        SequentialMemory,        # off-policy
 from core.agents.empty import EmptyAgent
 from core.agents.dqn   import DQNAgent
 from core.agents.a3c   import A3CAgent
-from core.agents.acer  import ACERAgent
+from core.agents.a3c  import A3CAgent as ACERAgent
 AgentDict = {"empty": EmptyAgent,               # to test integration of new envs, contains only the most basic control loop
              "dqn":   DQNAgent,                 # dqn  (w/ double dqn & dueling as options)
              "a3c":   A3CAgent,                 # a3c  (multi-process, pure cpu version)

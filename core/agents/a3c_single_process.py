@@ -209,7 +209,11 @@ class A3CLearner(A3CSingleProcess):
                 policy_loss_vb -= policy_log_vb[i] * Variable(gae_ts) + self.master.beta * entropy_vb[i]
 
         loss_vb = policy_loss_vb + 0.5 * value_loss_vb
+        import time
+        t1 = time.time()
         loss_vb.backward()
+        t2 = time.time()
+        print("time: ",t2-t1)
         torch.nn.utils.clip_grad_norm(self.model.parameters(), self.master.clip_grad)
 
         self._ensure_global_grads()

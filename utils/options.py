@@ -38,7 +38,7 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu3"  # "machine_id"
-        self.timestamp   = "17082801"   # "yymmdd##"
+        self.timestamp   = "17083101"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 14
@@ -67,7 +67,7 @@ class Params(object):   # NOTE: shared across all modules
         elif self.agent_type == "a3c":
             self.enable_log_at_train_step = True # when False, x-axis would be frame_step instead of train_step
 
-            self.enable_lstm        = False
+            self.enable_lstm        = True
             if "-con" in self.model_type:
                 self.enable_continuous  = True
             else:
