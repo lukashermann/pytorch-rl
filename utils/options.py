@@ -255,7 +255,7 @@ class AgentParams(Params):  # hyperparameters for drl agents
 
             self.rollout_steps       = 50       # max look-ahead steps in a single rollout
             self.tau                 = 1.
-            self.beta                = 0.01     # coefficient for entropy penalty
+            self.beta                = 0.001     # coefficient for entropy penalty
         elif self.agent_type == "acer":
             self.steps               = 20000000 # max #iterations
             self.early_stop          = 500      # max #steps per episode
