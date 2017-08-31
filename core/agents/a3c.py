@@ -20,7 +20,7 @@ class A3CAgent(Agent):
         self.enable_mjc_dis = self.dummy_env.enable_mjc_dis
         del self.dummy_env
         # observation Filter
-        # self.env_params.ob_filter = ZFilter(self.state_shape)
+        self.env_params.ob_filter = ZFilter(self.state_shape)
         # global shared model
         self.model_params.state_shape = self.state_shape
         self.model_params.action_dim  = self.action_dim
