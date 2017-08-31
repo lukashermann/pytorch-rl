@@ -38,7 +38,7 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu3"  # "machine_id"
-        self.timestamp   = "17083102"   # "yymmdd##"
+        self.timestamp   = "17083103"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 14
