@@ -38,7 +38,7 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu3"  # "machine_id"
-        self.timestamp   = "17090101"   # "yymmdd##"
+        self.timestamp   = "17090102"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 14
@@ -75,7 +75,7 @@ class Params(object):   # NOTE: shared across all modules
             self.num_processes      = 16
 
             self.hist_len           = 1
-            self.hidden_dim         = 64
+            self.hidden_dim         = 128
 
             self.use_cuda           = False
             self.dtype              = torch.FloatTensor
