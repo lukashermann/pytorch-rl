@@ -29,7 +29,7 @@ CONFIGS = [
 [ "a3c",      "mujoco",    "InvertedPendulumPixel-v1",  "a3c-cnn-con",      "none"      ],   # 11
 [ "a3c",      "mujoco",    "ReacherPixel-v1",           "a3c-cnn-dis-mjc",      "none"      ],   # 12
 [ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con",      "none"      ],   # 13
-[ "a3c",      "gym",       "Reacher-v1",                "a3c-mlp-con3",      "none"      ]   # 14
+[ "a3c",      "gym",       "Jaco-v1",                "a3c-mlp-con3",      "none"      ]   # 14
 ]
 
 class Params(object):   # NOTE: shared across all modules
@@ -38,14 +38,14 @@ class Params(object):   # NOTE: shared across all modules
 
         # training signature
         self.machine     = "lukas_aiscpu3"  # "machine_id"
-        self.timestamp   = "17083102"   # "yymmdd##"
+        self.timestamp   = "17090101"   # "yymmdd##"
         # training configuration
         self.mode        = 1            # 1(train) | 2(test model_file)
         self.config      = 14
 
         self.seed        = 123
         self.render      = False         # whether render the window from the original envs or not
-        self.visualize   = False         # whether do online plotting and stuff or not
+        self.visualize   = True         # whether do online plotting and stuff or not
         self.save_best   = False        # save model w/ highest reward if True, otherwise always save the latest model
 
         self.agent_type, self.env_type, self.game, self.model_type, self.memory_type = CONFIGS[self.config]
